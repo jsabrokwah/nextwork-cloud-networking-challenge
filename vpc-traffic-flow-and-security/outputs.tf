@@ -26,6 +26,10 @@ output "public_subnet_1_cidr_block" {
   value       = aws_subnet.public_subnet_1.cidr_block
 }
 
+# Output the actual default route table ID
+output "default_route_table_id" {
+  value = aws_vpc.nextwork_vpc.default_route_table_id
+}
 output "availability_zone" {
   description = "Availability Zone where resources are created"
   value       = data.aws_availability_zones.available.names[0]
