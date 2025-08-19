@@ -115,3 +115,36 @@ resource "aws_security_group" "nextwork_security_group" {
     Name = "NextWork Security Group"
   }
 }
+
+# Create Network ACL
+resource "aws_network_acl" "nextwork_network_acl" {
+  vpc_id = aws_vpc.nextwork_vpc.id
+
+  ingress {
+    protocol   = "-1"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
+  }
+
+  egress {
+    protocol   = "-1"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
+  }
+
+  tags = {
+    Name = "NextWork Network ACL"
+  }
+}
+
+# Associate Network ACL with the public subnet
+resource "aws_network_acl_association" "public_subnet_1_acl_association" {
+  network_acl_id = aws_network_acl.nextwork_network_acl.id
+  subnet_id      = aws_subnet.public_subnet_1.id
+}

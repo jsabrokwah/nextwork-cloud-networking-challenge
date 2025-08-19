@@ -45,3 +45,14 @@ output "availability_zone" {
   description = "Availability Zone where resources are created"
   value       = data.aws_availability_zones.available.names[0]
 }
+
+# Network ACL Outputs
+output "network_acl_id" {
+  description = "ID of the NextWork Network ACL"
+  value       = aws_network_acl.nextwork_network_acl.id
+}
+
+output "network_acl_name" {
+  description = "Name of the NextWork Network ACL"
+  value       = aws_network_acl.nextwork_network_acl.tags["Name"]
+}
