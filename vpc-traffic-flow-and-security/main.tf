@@ -87,3 +87,31 @@ resource "aws_route_table_association" "public_subnet_1_association" {
   subnet_id      = aws_subnet.public_subnet_1.id
   route_table_id = aws_default_route_table.nextwork_main_rt.id
 }
+
+
+# Create Security Group
+resource "aws_security_group" "nextwork_security_group" {
+  name        = "NextWork Security Group"
+  description = "A Security Group for the NextWork VPC"
+  vpc_id      = aws_vpc.nextwork_vpc.id
+
+  ingress {
+    description = "HTTP from Anywhere-IPv4"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Allow all outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "NextWork Security Group"
+  }
+}

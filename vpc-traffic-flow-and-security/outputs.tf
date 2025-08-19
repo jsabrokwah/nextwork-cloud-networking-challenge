@@ -26,6 +26,17 @@ output "public_subnet_1_cidr_block" {
   value       = aws_subnet.public_subnet_1.cidr_block
 }
 
+# Security Group Outputs
+output "security_group_id" {
+  description = "ID of the NextWork Security Group"
+  value       = aws_security_group.nextwork_security_group.id
+}
+
+output "security_group_name" {
+  description = "Name of the NextWork Security Group"
+  value       = aws_security_group.nextwork_security_group.name
+}
+
 # Output the actual default route table ID
 output "default_route_table_id" {
   value = aws_vpc.nextwork_vpc.default_route_table_id
