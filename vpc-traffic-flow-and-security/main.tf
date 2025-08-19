@@ -61,6 +61,7 @@ resource "aws_default_route_table" "nextwork_main_rt" {
 #   id = aws_vpc.nextwork_vpc.default_route_table_id
 # }
 
+# Rename the route table to "NextWork route table"
 resource "aws_route_table" "existing_rt" {
   vpc_id = aws_vpc.nextwork_vpc.id
   tags = {
@@ -79,4 +80,10 @@ resource "aws_route" "internet_access" {
 # Data source to get available AZs
 data "aws_availability_zones" "available" {
   state = "available"
+}
+
+# Associate the route table with the Public 1 subnet
+resource "aws_route_table_association" "public_subnet_1_association" {
+  subnet_id      = aws_subnet.public_subnet_1.id
+  route_table_id = aws_default_route_table.nextwork_main_rt.id
 }
