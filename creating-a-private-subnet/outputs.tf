@@ -26,6 +26,21 @@ output "public_subnet_1_cidr_block" {
   value       = aws_subnet.public_subnet_1.cidr_block
 }
 
+output "private_subnet_1_id" {
+  description = "ID of the Private Subnet 1"
+  value       = aws_subnet.private_subnet_1.id
+}
+
+output "private_subnet_1_cidr_block" {
+  description = "CIDR block of the Private Subnet 1"
+  value       = aws_subnet.private_subnet_1.cidr_block
+}
+
+output "private_subnet_1_az" {
+  description = "Availability Zone of the Private Subnet 1"
+  value       = aws_subnet.private_subnet_1.availability_zone
+}
+
 # Security Group Outputs
 output "security_group_id" {
   description = "ID of the NextWork Security Group"

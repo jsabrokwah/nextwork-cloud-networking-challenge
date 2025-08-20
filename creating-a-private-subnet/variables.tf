@@ -18,3 +18,11 @@ variable "public_subnet_1_cidr" {
   type        = string
   default     = "10.0.0.0/24"
 }
+
+# Private Subnet Configuration
+variable "private_subnet_1_cidr" {
+  description = "CIDR block for private subnet 1 - for investigation purposes"
+  type        = string
+  default     = "10.0.1.0/24"  # Using 10.0.1.0/24 to avoid overlap
+}
+

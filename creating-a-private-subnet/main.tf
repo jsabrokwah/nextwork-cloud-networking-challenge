@@ -41,7 +41,7 @@ resource "aws_subnet" "public_subnet_1" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "Public 1"
+    Name = "NextWork Public Subnet"
   }
 }
 
@@ -50,7 +50,7 @@ resource "aws_default_route_table" "nextwork_main_rt" {
   default_route_table_id = aws_vpc.nextwork_vpc.default_route_table_id
 
   tags = {
-    Name = "NextWork route table"
+    Name = "NextWork Public Route Table"
   }
 }
 
@@ -61,11 +61,11 @@ resource "aws_default_route_table" "nextwork_main_rt" {
 #   id = aws_vpc.nextwork_vpc.default_route_table_id
 # }
 
-# Rename the imported route table to "NextWork route table"
+# Rename the imported route table to "NextWork Public Route Table"
 # resource "aws_route_table" "existing_rt" {
 #   vpc_id = aws_vpc.nextwork_vpc.id
 #   tags = {
-#     Name = "NextWork route table"
+#     Name = "NextWork Public Route Table"
 #   }
 # }
 
@@ -139,7 +139,7 @@ resource "aws_network_acl" "nextwork_network_acl" {
   }
 
   tags = {
-    Name = "NextWork Network ACL"
+    Name = "NextWork Public NACL"
   }
 }
 
@@ -148,3 +148,63 @@ resource "aws_network_acl_association" "public_subnet_1_acl_association" {
   network_acl_id = aws_network_acl.nextwork_network_acl.id
   subnet_id      = aws_subnet.public_subnet_1.id
 }
+
+# Create Private Subnet - Investigation of CIDR overlap
+resource "aws_subnet" "private_subnet_1" {
+  vpc_id            = aws_vpc.nextwork_vpc.id
+  cidr_block        = var.private_subnet_1_cidr  # Using 10.0.1.0/24 to avoid overlap
+  availability_zone = data.aws_availability_zones.available.names[1]  # Second AZ (us-east-1b)
+
+  tags = {
+    Name = "NextWork Private Subnet"
+  }
+}
+
+# Create separate route table for private subnet (no internet gateway route)
+resource "aws_route_table" "private_rt" {
+  vpc_id = aws_vpc.nextwork_vpc.id
+
+  tags = {
+    Name = "NextWork Private Route Table"
+  }
+}
+
+# Create Network ACL
+resource "aws_network_acl" "nextwork_private_network_acl" {
+  vpc_id = aws_vpc.nextwork_vpc.id
+
+  ingress {
+    protocol   = "-1"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
+  }
+
+  egress {
+    protocol   = "-1"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
+  }
+
+  tags = {
+    Name = "NextWork Private NACL"
+  }
+}
+
+# Associate private subnet with private route table
+resource "aws_route_table_association" "private_subnet_1_association" {
+  subnet_id      = aws_subnet.private_subnet_1.id
+  route_table_id = aws_route_table.private_rt.id
+}
+
+# Associate the private network ACL with the private subnet
+resource "aws_network_acl_association" "private_subnet_1_acl_association" {
+  network_acl_id = aws_network_acl.nextwork_private_network_acl.id
+  subnet_id      = aws_subnet.private_subnet_1.id
+}
+
