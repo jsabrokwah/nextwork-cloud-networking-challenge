@@ -54,21 +54,6 @@ resource "aws_default_route_table" "nextwork_main_rt" {
   }
 }
 
-# Uncomment this block, run terraform plan and apply to import the default route table, then comment it out or delete it
-#
-# import {
-#   to = aws_route_table.existing_rt
-#   id = aws_vpc.nextwork_vpc.default_route_table_id
-# }
-
-# Rename the imported route table to "NextWork Public Route Table"
-# resource "aws_route_table" "existing_rt" {
-#   vpc_id = aws_vpc.nextwork_vpc.id
-#   tags = {
-#     Name = "NextWork Public Route Table"
-#   }
-# }
-
 # Add a route to the Internet Gateway
 resource "aws_route" "internet_access" {
   route_table_id         = aws_default_route_table.nextwork_main_rt.id
