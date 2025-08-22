@@ -87,7 +87,6 @@ resource "aws_security_group" "nextwork_security_group" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-  # Ingress for SSH to test connectivity from the public internet
   ingress {
     description = "SSH from Anywhere-IPv4"
     from_port   = 22
@@ -166,22 +165,16 @@ resource "aws_route_table" "private_rt" {
 resource "aws_network_acl" "nextwork_private_network_acl" {
   vpc_id = aws_vpc.nextwork_vpc.id
 
+    # Allow ICMP from public subnet for connectivity testing
   ingress {
-    protocol   = "-1"
+    protocol   = "icmp"
     rule_no    = 100
     action     = "allow"
-    cidr_block = "0.0.0.0/0"
+    cidr_block = var.public_subnet_1_cidr
     from_port  = 0
     to_port    = 0
-  }
-
-  egress {
-    protocol   = "-1"
-    rule_no    = 100
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 0
-    to_port    = 0
+    icmp_type  = -1
+    icmp_code  = -1
   }
 
   tags = {
@@ -233,6 +226,14 @@ resource "aws_security_group" "nextwork_private_security_group" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
+    security_groups = [aws_security_group.nextwork_security_group.id]
+  }
+
+  ingress {
+    description = "All ICMP from Public Security Group"
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
     security_groups = [aws_security_group.nextwork_security_group.id]
   }
 
