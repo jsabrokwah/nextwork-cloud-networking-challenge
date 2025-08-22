@@ -87,6 +87,14 @@ resource "aws_security_group" "nextwork_security_group" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  # Ingress for SSH to test connectivity from the public internet
+  ingress {
+    description = "SSH from Anywhere-IPv4"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   egress {
     description = "Allow all outbound traffic"
@@ -191,5 +199,79 @@ resource "aws_route_table_association" "private_subnet_1_association" {
 resource "aws_network_acl_association" "private_subnet_1_acl_association" {
   network_acl_id = aws_network_acl.nextwork_private_network_acl.id
   subnet_id      = aws_subnet.private_subnet_1.id
+}
+
+# Data source to get the latest Amazon Linux 2 AMI (free tier eligible)
+data "aws_ami" "amazon_linux_2" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+}
+
+# Create Security Group for Private Server
+resource "aws_security_group" "nextwork_private_security_group" {
+  name        = "NextWork Private Security Group"
+  description = "Security group for NextWork Private Subnet"
+  vpc_id      = aws_vpc.nextwork_vpc.id
+
+  ingress {
+    description = "SSH from Public Security Group"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    security_groups = [aws_security_group.nextwork_security_group.id]
+  }
+
+  egress {
+    description = "Allow all outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "NextWork Private Security Group"
+  }
+}
+
+# Create EC2 Instance - NextWork Public Server
+resource "aws_instance" "nextwork_public_server" {
+  ami                    = data.aws_ami.amazon_linux_2.id
+  instance_type          = "t2.micro"
+  key_name               = "NextWorkChallenge"
+  subnet_id              = aws_subnet.public_subnet_1.id
+  vpc_security_group_ids = [aws_security_group.nextwork_security_group.id]
+
+  tags = {
+    Name = "NextWork Public Server"
+  }
+}
+
+# Create EC2 Instance - NextWork Private Server
+resource "aws_instance" "nextwork_private_server" {
+  ami                    = data.aws_ami.amazon_linux_2.id
+  instance_type          = "t2.micro"
+  key_name               = "NextWorkChallenge"
+  subnet_id              = aws_subnet.private_subnet_1.id
+  vpc_security_group_ids = [aws_security_group.nextwork_private_security_group.id]
+
+  tags = {
+    Name = "NextWork Private Server"
+  }
 }
 

@@ -71,3 +71,46 @@ output "network_acl_name" {
   description = "Name of the NextWork Network ACL"
   value       = aws_network_acl.nextwork_network_acl.tags["Name"]
 }
+
+# EC2 Instance Outputs
+output "ec2_instance_id" {
+  description = "ID of the NextWork Public Server EC2 instance"
+  value       = aws_instance.nextwork_public_server.id
+}
+
+output "ec2_instance_public_ip" {
+  description = "Public IP address of the NextWork Public Server EC2 instance"
+  value       = aws_instance.nextwork_public_server.public_ip
+}
+
+output "ec2_instance_public_dns" {
+  description = "Public DNS name of the NextWork Public Server EC2 instance"
+  value       = aws_instance.nextwork_public_server.public_dns
+}
+
+# Private Security Group Outputs
+output "private_security_group_id" {
+  description = "ID of the NextWork Private Security Group"
+  value       = aws_security_group.nextwork_private_security_group.id
+}
+
+output "private_security_group_name" {
+  description = "Name of the NextWork Private Security Group"
+  value       = aws_security_group.nextwork_private_security_group.name
+}
+
+# Private EC2 Instance Outputs
+output "private_ec2_instance_id" {
+  description = "ID of the NextWork Private Server EC2 instance"
+  value       = aws_instance.nextwork_private_server.id
+}
+
+output "private_ec2_instance_private_ip" {
+  description = "Private IP address of the NextWork Private Server EC2 instance"
+  value       = aws_instance.nextwork_private_server.private_ip
+}
+
+output "private_ec2_instance_private_dns" {
+  description = "Private DNS name of the NextWork Private Server EC2 instance"
+  value       = aws_instance.nextwork_private_server.private_dns
+}
