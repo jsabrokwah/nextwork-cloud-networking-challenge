@@ -169,7 +169,7 @@ resource "aws_security_group" "vpc_1_instance_sg" {
     from_port   = -1
     to_port     = -1
     protocol    = "icmp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [aws_vpc.nextwork_vpc_2.cidr_block]
   }
 
   # Allow all outbound traffic
@@ -196,7 +196,7 @@ resource "aws_security_group" "vpc_2_instance_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [aws_vpc.nextwork_vpc_2.cidr_block]
   }
 
   # Allow ICMP (ping) for connectivity testing
