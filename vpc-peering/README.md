@@ -1,10 +1,11 @@
-# VPC Peering Configuration
+# VPC Peering
 
 This Terraform configuration creates two VPCs with a VPC peering connection and EC2 instances for connectivity testing.
 
 ## VPC Configuration
 
 ### VPC 1 (NextWork-1)
+
 - **CIDR Block**: 10.1.0.0/16
 - **Name Tag**: NextWork-1
 - **Public Subnets**: 1 (10.1.0.0/24)
@@ -12,6 +13,7 @@ This Terraform configuration creates two VPCs with a VPC peering connection and 
 - **NAT Gateways**: None
 
 ### VPC 2 (NextWork-2)
+
 - **CIDR Block**: 10.2.0.0/16
 - **Name Tag**: NextWork-2
 - **Public Subnets**: 1 (10.2.0.0/24)
@@ -32,6 +34,7 @@ The configuration establishes a VPC peering connection between VPC 1 and VPC 2 w
 Each VPC contains an EC2 instance for testing connectivity:
 
 ### VPC 1 Instance
+
 - **AMI**: Amazon Linux 2 (ami-00ca32bbc84273381)
 - **Instance Type**: t2.micro
 - **Subnet**: Public Subnet 1 (10.1.0.0/24)
@@ -39,6 +42,7 @@ Each VPC contains an EC2 instance for testing connectivity:
 - **Key Pair**: None (proceed without key pair)
 
 ### VPC 2 Instance
+
 - **AMI**: Amazon Linux 2 (ami-00ca32bbc84273381)
 - **Instance Type**: t2.micro
 - **Subnet**: Public Subnet 2 (10.2.0.0/24)
@@ -48,11 +52,13 @@ Each VPC contains an EC2 instance for testing connectivity:
 ## Security Group Configuration
 
 ### VPC 1 Instance Security Group
+
 - **SSH Access**: Allowed from anywhere (0.0.0.0/0)
 - **ICMP (ping)**: Allowed from VPC 2 CIDR (10.2.0.0/16)
 - **Outbound Traffic**: Allowed to anywhere
 
 ### VPC 2 Instance Security Group
+
 - **SSH Access**: Allowed from VPC 2 CIDR (10.2.0.0/16)
 - **ICMP (ping)**: Allowed from anywhere (0.0.0.0/0)
 - **Outbound Traffic**: Allowed to anywhere
@@ -60,6 +66,7 @@ Each VPC contains an EC2 instance for testing connectivity:
 ## Resources Created
 
 Each VPC includes:
+
 - VPC with DNS support enabled
 - Internet Gateway
 - Public subnet in a different availability zone
@@ -72,21 +79,25 @@ Each VPC includes:
 ## Usage
 
 1. Initialize Terraform:
+
    ```bash
    terraform init
    ```
 
 2. Plan the deployment:
+
    ```bash
    terraform plan
    ```
 
 3. Apply the configuration:
+
    ```bash
    terraform apply
    ```
 
 4. View outputs (includes instance public IPs for testing):
+
    ```bash
    terraform output
    ```
@@ -126,4 +137,3 @@ The configuration provides the following outputs:
 - VPC peering is configured with auto-accept for seamless connection establishment
 - EC2 instances are deployed without key pairs for simplified testing
 - Security groups are configured to allow connectivity testing between VPCs
-
